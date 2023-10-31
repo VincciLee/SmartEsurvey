@@ -1,0 +1,65 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: view_result.html
+Description: The UI of viewing all responses of the survey
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "side_container.html" %}
+{% block title %}Survey Result{% endblock %}
+{% block owned_tab %}
+    {% if survey.user_id|string == current_user.id|string %}
+        <li class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
+    {% endif %}
+{% endblock %}
+{% block option_list %}
+    {% if survey.user_id|string != current_user.id|string %}
+        <ul class="list-group" hidden>
+    {% endif %}
+{% endblock %}
+{% block content%}
+    <h1 align="center">Survey Result - Responses List</h1>
+
+    <div class="d-flex justify-content-between mt-5 mb-4" style="padding-left: 5%; padding-right: 5%">
+        <div>
+            {% if count == 0 %} <button type="button" class="btn btn-success" style="width: 10vw;" href="/export_csv/{{ survey.id }}/view_result" disabled>Export to CSV</button>
+            {% else %}
+            <a type="button" class="btn btn-success" style="width: 10vw;" href="/export_csv/{{ survey.id }}/view_result">Export to CSV</a>
+            {% endif %}
+        </div>
+
+        <form metehod="POST">
+            <div>
+                {% if survey.demographic == "True" %}
+                    <a type="button" class="btn btn-primary" style="width: 10vw;" href="/view_result_demographic/{{ survey.id }}">Demographics</a>
+                {% endif %}
+                <a type="button" class="btn btn-primary mx-2" style="width: 10vw;" href="/view_result_summary/{{ survey.id }}">Summary</a>
+                <a type="button" class="btn btn-primary" style="width: 10vw;" href="/view_result_sentiment/{{ survey.id }}">Sentiment</a>
+            </div>
+        </form>
+    </div>
+
+    {% for d in details %}
+        <div class="mx-auto mt-3" style="width: 90%;">
+            <div class="btn-group" style="width: 100%;">
+                <button type="button" class="btn btn-primary-no-hover" style="width: 90%; text-align: left;">{{ d.question }}</button>
+                <button class="btn btn-primary-no-hover" type="button" data-toggle="collapse" data-target=".multi-collapse_{{ d.id }}" aria-expanded="false" aria-controls="collapseExample_{{ d.id }}">
+                    <span class="fa fa-plus"></span>
+                </button>
+            </div> 
+        </div>
+        
+        <div class="collapse multi-collapse_{{ d.id }} scroller mx-auto" id="scrollbar">
+            <span id="collapseExample_{{ d.id }}"></span>
+        {% for r in responses[d.id] %}
+            <div class="collapse multi-collapse_{{ d.id }} mx-auto" id="collapseExample_{{ d.id }}">
+                <div class="card card-body bg-secondary text-white border border-dark">
+                    {{ r.answer }}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endfor %}
+    
+{% endblock %}

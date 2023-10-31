@@ -1,0 +1,82 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: search_survey.html
+Description: The UI of searching survey
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "side_container.html" %}
+{% block title %}Home{% endblock %}
+{% block option_list %}<ul class="list-group" hidden>{% endblock %}
+{% block content%}
+    <div class="d-flex mx-auto justify-content-between mt-5" style="width: 90%">
+        <div>
+            <a class="btn btn-primary" href="/create_survey" role="button" style="width: 10vw">Create Survey</a>
+        </div>
+        
+        <form method="POST">
+            <div class="input-group" style="width: 30vw">
+                <input type="search" name="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" required />
+                <button type="submit" class="btn btn-outline-primary">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mx-auto mt-3 mb-5" style="width: 90%">
+        <h2>Search Result</h2>
+        
+        <div class="d-flex align-items-start">
+            {% if surveys.count() == 0 %}
+                <div class="card mr-5" style="width: 100%; height: 15vw">
+                    <div class="card-body">
+                        <div class="w-100 h-100 pt-4">
+                            <h5 class="card-title text-center mt-5">Whoops! Looks like there is no survey matches with the keyword</h5>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="grid-container" style="width: 100%">
+                {% for s in surveys %}
+                    <div class="card mr-5">
+                        <div class="card-body">
+                            <div><h5 class="card-title" style="text-overflow: clip; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{ s.title }}</h5></div>
+                            <hr>
+                            <div>
+                                {% if s.field_tag != "Any" %}
+                                    <span class="badge bg-info py-2">{{ s.field_tag }}</span>
+                                {% endif %}
+                                {% if s.occupation_tag != "Any" %}
+                                    <span class="badge bg-info py-2">{{ s.occupation_tag }}</span>
+                                {% endif %}
+                                {% if s.age_tag != "Any" %}
+                                    <span class="badge bg-info py-2">Age {{ s.age_tag }}</span>
+                                {% endif %}
+                                {% if s.field_tag == "Any" and s.occupation_tag == "Any" and s.age_tag == "Any" %}
+                                    <span class="badge bg-info py-2">Open to anyone</span>
+                                {% endif %}
+                            </div>
+                            <div class="mt-2"><p class="card-text font-italic">{{ s.date_started }} - {{ s.date_closed }}</p></div>
+                            {% if respondents[s.id] >= s.target|int %}
+                                <div class="mt-2"><p class="card-text">Welcome more respondents</p></div>
+                            {% else %}
+                                <div class="mt-2"><p class="card-text">{{ s.target|int - respondents[s.id] }} respondents needed</p></div>
+                            {% endif %}
+                            
+                            <div class="mt-2">
+                                {% if s.status == "Opened" %}
+                                    <a href="/do_survey/{{ s.id }}" class="btn btn-success mt-2">Take Part</a>
+                                {% elif s.status == "Pending" %}
+                                    <button type="button" class="btn btn-success mt-2" disabled>Take Part</button>
+                                {% else %}
+                                    <a href="/view_result/{{ s.id }}/{{ search }}" class="btn btn-info mt-2">View Result</a>
+                                {% endif%}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

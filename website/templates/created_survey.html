@@ -1,0 +1,78 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: cerated_survey.html
+Description: The UI of listing the created surveys
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "side_container.html" %}
+{% block title %}Created Surveys{% endblock %}
+{% block owned_tab %}<li class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">{% endblock %}
+{% block content%}
+    <div class="d-flex justify-content-end mt-5" style="width: 90%;">
+        <form method="POST">
+            <div class="input-group">
+                <select class="form-control dropdown" id="status" name="status" style="width: 15vw">
+                    <option value="All" {% if status == 'All' %} selected {% endif %}>All</option>
+                    <option value="Pending" {% if status == 'Pending' %} selected {% endif %}>Pending</option>
+                    <option value="Opened" {% if status == 'Opened' %} selected {% endif %}>Opened</option>
+                    <option value="Closed" {% if status == 'Closed' %} selected {% endif %}>Closed</option>
+                </select>
+                <button type="submit" class="btn btn-outline-primary">Filter</button>
+            </div>
+        </form>
+    </div>
+
+    {% for s in surveys%}
+        <div class="card mx-auto mt-3" style="width: 80%;">
+            <div class="card-body rounded" style="padding-left: 5%; padding-right: 5%">
+                <div class="d-flex justify-content-between">
+                    <div class="row box w-75 mt-1 h-auto">
+                        <h2 style="text-overflow: clip; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{ s.title }}</h2>
+                    </div>
+                    <div class="mt-2">
+                        {{ s.status }}
+                    </div>
+                </div>
+
+                    <div class="d-flex justify-content-between mt-2">
+                        <div class="row box w-75">
+                            {% if respondents[s.id] >= s.target|int %}
+                                <p class="font-weight-bold font-italic">Respondents target reached [{{ respondents[s.id] }} / {{ s.target }}]</p>
+                            {% else %}
+                                <p class="font-weight-bold font-italic">{{ s.target|int - respondents[s.id] }} respondents left [{{ respondents[s.id] }} / {{ s.target }}]</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {{ s.date_started }} - {{ s.date_closed }}
+                        </div>
+                    </div>
+
+                <div class="d-flex justify-content-between mt-2">
+                    <div>
+                        <a type="button" type="button" class="btn btn-success" href="/view_result/{{ s.id }}">Result</a>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-info" onclick="show_hide_code({{ s.id }})">Get Code</button>
+                        <a type="button" type="button" class="btn btn-warning" href="/edit_survey/{{ s.id }}/{{ status }}" disabled>Edit</a>
+                        <button type="button" class="btn btn-danger" {% if respondents[s.id] == 0 %} onclick="if(confirm('Are you sure you want to delete the survey?\nThis action cannot be undone.')) delete_survey({{ s.id }}, '{{ status }}');" {% else %} onclick="if(confirm('There are responses in this survey, are you sure you want to delete the survey? \nThis action cannot be undone.')) delete_survey({{ s.id }},'{{ status }}');" {% endif %} >Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="modal{{s.id}}" style="display: none;">
+            <div class="card modal-content" style="width: 30vw; height: 15vw">
+                <div class="card-header bg-dark text-white">
+                    <button class="close" onclick="show_hide_code({{ s.id }})">&times;</button>
+                </div>
+                
+                <div class="card-body">
+                    <h5 class="text-center">This is your survey code<h5>
+                    <h1 class="text-center mt-4 pt-2">{{ s.survey_code }}</h1>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

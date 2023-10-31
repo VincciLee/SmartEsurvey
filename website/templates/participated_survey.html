@@ -1,0 +1,61 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: participated_survey.html
+Description: The UI of listing participated surveys
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "side_container.html" %}
+{% block title %}Participated Surveys{% endblock %}
+{% block history_tab %}<li class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">{% endblock %}
+{% block content%}
+    <div class="d-flex justify-content-end mt-5" style="width: 90%;">
+        <form method="POST">
+            <div class="input-group">
+                <select class="form-control dropdown" id="status" name="status" style="width: 15vw">
+                    <option value="All" {% if status == 'All' %} selected {% endif %}>All</option>
+                    <option value="Complete" {% if status == 'Complete' %} selected {% endif %}>Complete</option>
+                    <option value="Draft" {% if status == 'Draft' %} selected {% endif %}>Draft</option>
+                </select>
+                <button type="submit" class="btn btn-outline-primary">Filter</button>
+            </div>
+        </form>
+    </div>
+
+    {% for s in surveys%}
+        <div class="card mx-auto mt-3" style="width: 80%;">
+            <div class="card-body rounded" style="padding-left: 5%; padding-right: 5%">
+                <div class="d-flex justify-content-between">
+                    <div class="row box w-75">
+                        <h2 style="text-overflow: clip; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{ s.title }}</h2>
+                    </div>
+                    <div>
+                        {{ responses[loop.index-1].status }}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-start">
+                    Date {% if responses[loop.index-1].status == 'Complete' %}submitted{% else %}saved{% endif %}: {{ responses[loop.index-1].date_submitted.split('.')[0] }}
+                </div>
+
+                <div class="d-flex justify-content-end mt-2">
+                    {% if responses[loop.index-1].status == 'Draft' %}
+                        <div class="d-flex justify-content-between mt-2">
+                            <button type="button" type="button" class="btn btn-danger mr-3" onclick="if(confirm('Are you sure you want to delete the draft?\nThis action cannot be undone.')) delete_response({{ responses[loop.index-1].id }}, '{{ status }}');" style="width: 8vw">Delete</button>
+                            <a type="button" type="button" class="btn btn-info" href="/view_history/{{ responses[loop.index-1].id }}/{{ status }}"  style="width: 8vw">
+                                Continue
+                            </a>
+                        </div>
+                    {% elif responses[loop.index-1].status == 'Complete' %}
+                        <div class="mt-2">
+                            <a type="button" type="button" class="btn btn-success" href="/view_history/{{ responses[loop.index-1].id }}/{{ status }}" style="width: 8vw">
+                                View
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

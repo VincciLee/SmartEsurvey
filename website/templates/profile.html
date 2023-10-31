@@ -1,0 +1,59 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: profile.html
+Description: The UI of displaying user profile
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "side_container.html" %}
+{% block title %}Profile{% endblock %}
+{% block content%}
+<h1 align="center">Profile Information</h1>
+
+<div class="card container-fluid box bg-transparent mt-5" style="width: 90%; height: auto">
+    <div class="card-body rounded px-5 py-5">
+        <div class="row box">
+            <div class="col-sm-6 ">
+                <div class="form-group">
+                    <label for="username" align="left">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" disabled>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" disabled>
+                </div>
+            
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <input type="text" class="form-control" id="gender" name="gender" value="{{ user.gender }}" disabled>
+                </div>
+            
+                <div class="form-group"> 
+                    <label for="dob">Birth Date</label>
+                    <input type="date" class="form-control" id="dob" name="dob" value="{{ user.dob }}" disabled>
+                </div>
+            </div>
+            
+            <div class="col-sm-6 ">
+                <div class="form-group">
+                    <label for="occupation">Occupation</label>
+                    <input type="text" class="form-control" id="occupation" name="occupation" value="{{ user.occupation }}" disabled>
+                </div>
+            
+                <div class="form-group">
+                    <label for="institute">Institute</label>
+                    <input type="text" class="form-control" id="institute" name="institute" value="{{ user.institute }}" disabled>
+                </div>
+                
+                <div class="form-group">
+                    <label for="field">Field</label>
+                    <input type="text" class="form-control" id="field" name="field" value="{{ user.field }}" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

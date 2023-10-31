@@ -1,0 +1,85 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: edit_profile.html
+Description: The UI of editing user profile
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "side_container.html" %}
+{% block title %}Edit Profile{% endblock %}
+{% block profile_tab %}<li class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">{% endblock %}
+{% block content%}
+    <h1 align="center">Edit Profile</h1>
+
+    <div class="card container-fluid box bg-transparent mt-3" style="width: 90%; height: auto">
+        <div class="card-body rounded px-5 py-5">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row box">
+                    <div class="col-sm-6 ">
+                        <div class="form-group">
+                            <label for="username" align="left">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" disabled>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select class="form-control dropdown" id="gender" name="gender">
+                                <option value="" selected="selected" disabled="disabled">-- Select gender --</option>
+                                <option value="Male" {% if user.gender == 'Male' %} selected {% endif %}>Male</option>
+                                <option value="Female" {% if user.gender == 'Female' %} selected {% endif %}>Female</option>
+                            </select>
+                        </div>
+                    
+                        <div class="form-group"> 
+                            <label for="dob">Birth Date</label>
+                            <input type="date" class="form-control" id="dob" name="dob" value="{{ user.dob }}">
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-6 ">
+                        <div class="form-group">
+                            <label for="occupation">Occupation</label>
+                            <select class="form-control dropdown" id="occupation" name="occupation">
+                                <option value="" selected="selected" disabled="disabled">-- Select occupation --</option>
+                                {% for occ in occupations %}
+                                    <option value="{{ occ }}" {% if user.occupation == occ %} selected {% endif %}>{{ occ }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="institute">Institute</label>
+                            <input type="text" class="form-control" id="institute" name="institute" value="{{ user.institute }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="field">Field</label>
+                            <select class="form-control dropdown" id="field" name="field">
+                                <option value="" selected="selected" disabled="disabled">-- Select field --</option>
+                                {% for f in fields %}
+                                    <option value="{{ f }}" {% if user.field == f %} selected {% endif %}>{{ f }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="image" class="form-label">Profile</label>
+                            <input type="file" class="form-control" name="image" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-center mt-5">
+                    <button type="submit" class="btn btn-primary" style="width: 10vw">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

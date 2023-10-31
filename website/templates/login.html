@@ -1,0 +1,30 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: login.html
+Description: The UI of login page
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content%}
+<form method="POST">
+    <div class="card card-body w-75 mx-auto py-5 mt-5">
+        <h3 class="mx-auto">Login</h3>
+        <div class="form-group mx-auto mt-3" style="width: 85%">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+        </div>
+
+        <div class="form-group mx-auto" style="width: 85%">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+        </div>
+
+        <div class="w-25 mx-auto mt-3">
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

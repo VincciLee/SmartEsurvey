@@ -1,0 +1,134 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: view_result_sentiment.html
+Description: The UI of viewing sentiment of the responses
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "side_container.html" %}
+{% block title %}Survey Result{% endblock %}
+{% block owned_tab %}
+    {% if survey.user_id|string == current_user.id|string %}
+        <li class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
+    {% endif %}
+{% endblock %}
+{% block option_list %}
+    {% if survey.user_id|string != current_user.id|string %}
+        <ul class="list-group" hidden>
+    {% endif %}
+{% endblock %}
+{% block content%}
+    <h1 align="center">Survey Result - Responses Sentiment</h1>
+
+    <div class="d-flex justify-content-between mt-5 mb-4" style="padding-left: 5%; padding-right: 5%">
+        <div>
+            {% if count == 0 %} <button type="button" class="btn btn-success" style="width: 10vw;" href="/export_csv/{{ survey.id }}/view_result" disabled>Export to CSV</button>
+            {% else %}
+            <a type="button" class="btn btn-success" style="width: 10vw;" href="/export_csv/{{ survey.id }}/view_result">Export to CSV</a>
+            {% endif %}
+        </div>
+
+        <form metehod="POST">
+            <div>
+                {% if survey.demographic == "True" %}
+                    <a type="button" class="btn btn-primary" style="width: 10vw;" href="/view_result_demographic/{{ survey.id }}">Demographics</a>
+                {% endif %}
+                <a type="button" class="btn btn-primary" style="width: 10vw;" href="/view_result/{{ survey.id }}">All Responses</a>
+                <a type="button" class="btn btn-primary" style="width: 10vw;" href="/view_result_summary/{{ survey.id }}">Summary</a>
+            </div>
+        </form>
+    </div>
+
+    {% for d in details %}
+        <div class="mx-auto mt-3" style="width: 90%;">
+            <div class="btn-group" style="width: 100%;">
+                <button type="button" class="btn btn-primary-no-hover" style="width: 90%; text-align: left;">{{ d.question }}</button>
+                <button class="btn btn-primary-no-hover" type="button" data-toggle="collapse" data-target=".multi-collapse_{{ d.id }}" aria-expanded="false" aria-controls="collapseExample_{{ d.id }}">
+                    <span class="fa fa-plus"></span>
+                </button>
+            </div> 
+        </div>
+
+        {% set total = sentiments[d.id]['1']|length + sentiments[d.id]['0']|length + sentiments[d.id]['-1']|length %}
+        {% if total > 0 %}
+            {% set positive = sentiments[d.id]['1']|length / total * 100 %}
+            {% set neutral = sentiments[d.id]['0']|length / total * 100 %}
+            {% set negative = sentiments[d.id]['-1']|length / total * 100 %}
+        {% else %}
+            {% set positive = 0 %}
+            {% set neutral = 0 %}
+            {% set negative = 0 %}
+        {% endif %}
+        
+        <div class="btn-group dropup progress mx-auto" style="width: 90%;">
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{ positive }}%" aria-valuenow="{{ positive }}" aria-valuemin="0" aria-valuemax="100">
+                <button type="button" class="bg-transparent border-0" style="height:100%" data-toggle="tooltip" data-placement="top" title="{{ positive|round(2, 'common') }}% ({{ sentiments[d.id]['1']|length }} responses)">
+                </button>
+            </div>
+            <div class="progress-bar bg-info" role="progressbar" style="width: {{ neutral }}%" aria-valuenow="{{ neutral }}" aria-valuemin="0" aria-valuemax="100">
+                <button type="button" class="bg-transparent border-0" style="height:100%" data-toggle="tooltip" data-placement="top" title="{{ neutral|round(2, 'common') }}% ({{ sentiments[d.id]['0']|length }} responses)">
+                </button>
+            </div>
+            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ negative }}%" aria-valuenow="{{ negative }}" aria-valuemin="0" aria-valuemax="100">
+                <button type="button" class="bg-transparent border-0" style="height:100%" data-toggle="tooltip" data-placement="top" title="{{ negative|round(2, 'common') }}% ({{ sentiments[d.id]['-1']|length }} responses)">
+                </button>
+            </div>
+        </div>
+
+        {% for key in sentiments[d.id] %}
+            {% if key == '1' %}
+                {% set sentiment = 'Positive' %}
+                {% set bg = 'btn-success' %}
+            {% elif key == '0' %}
+                {% set sentiment = 'Neutral' %}
+                {% set bg = 'btn-info' %}
+            {% else %}
+                {% set sentiment = 'Negative' %}
+                {% set bg = 'btn-danger' %}
+            {% endif %}
+
+            {% if sentiments[d.id][key]|length > 0 %}
+                <div class="collapse multi-collapse_{{ d.id }} mx-auto mt-3" style="width: 90%;">
+                    <div class="btn-group" style="width: 100%;">
+                        <button type="button" class="btn {{ bg }}" style="width: 90%; text-align: left;">{{ sentiment }}</button>
+                        <button class="btn {{ bg }}" type="button" data-toggle="collapse" data-target=".multi-collapse_{{ d.id }}_{{ key }}" aria-expanded="false" aria-controls="collapseExample_{{ d.id }}_{{ key }}">
+                            <span class="fa fa-plus"></span>
+                        </button>
+                    </div> 
+                </div>
+
+                <div class="collapse multi-collapse_{{ d.id }}_{{ key }} scroller mx-auto" id="scrollbar">
+                    <span id="collapseExample_{{ d.id }}_{{ key }}"></span>
+                {% for item in sentiments[d.id][key] %}
+                    <div class="collapse multi-collapse_{{ d.id }}_{{ key }} mx-auto" id="collapseExample_{{ d.id }}_{{ key }}">
+                        <div class="card card-body bg-secondary text-white border border-dark">
+                            <div class="d-flex justify-content-between">
+                                <div class="w-90 pr-3">
+                                    {{ item }}
+                                </div>
+                                <div class="w-10">
+                                    {% set mistake = False %}
+                                    {% if key == '1' and real_sentiments[d.id][key][loop.index-1] != 'Positive' %}  
+                                        {% set mistake = True %}
+                                    {% elif key == '0' and real_sentiments[d.id][key][loop.index-1] != 'Neutral' %}  
+                                        {% set mistake = True %}
+                                    {% elif key == '-1' and real_sentiments[d.id][key][loop.index-1] != 'Negative' %}  
+                                        {% set mistake = True %}
+                                    {% endif %}
+
+                                    {% if mistake %} <p class="text-danger font-weight-bold">{% else %} <p> {% endif %}
+                                        {{ real_sentiments[d.id][key][loop.index-1] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        
+    {% endfor %}
+    
+{% endblock %}

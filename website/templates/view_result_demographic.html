@@ -1,0 +1,267 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: view_result_demographic.html
+Description: The UI of viewing demographic statistics
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "side_container.html" %}
+{% block title %}Survey Result{% endblock %}
+{% block owned_tab %}
+    {% if survey.user_id|string == current_user.id|string %}
+        <li class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
+    {% endif %}
+{% endblock %}
+{% block option_list %}
+    {% if survey.user_id|string != current_user.id|string %}
+        <ul class="list-group" hidden>
+    {% endif %}
+{% endblock %}
+{% block content%}
+    <h1 align="center">Survey Result - Demographic Statistics</h1>
+
+    <div class="d-flex justify-content-between mt-5 mb-4" style="padding-left: 5%; padding-right: 5%">
+        <div>
+            {% if count == 0 %} <button type="button" class="btn btn-success" style="width: 10vw;" href="/export_csv/{{ survey.id }}/view_result" disabled>Export to CSV</button>
+            {% else %}
+            <a type="button" class="btn btn-success" style="width: 10vw;" href="/export_csv/{{ survey.id }}/view_result">Export to CSV</a>
+            {% endif %}
+        </div>
+
+        <form metehod="POST">
+            <div>
+                <a type="button" class="btn btn-primary" style="width: 10vw;" href="/view_result/{{ survey.id }}">All Responses</a>
+                <a type="button" class="btn btn-primary mx-2" style="width: 10vw;" href="/view_result_summary/{{ survey.id }}">Summary</a>
+                <a type="button" class="btn btn-primary" style="width: 10vw;" href="/view_result_sentiment/{{ survey.id }}">Sentiment</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="d-flex justify-content-between mx-auto" style="width: 90%">
+        <div class="card card-body" style="width: 25%">
+            <canvas class="" id="genderChart"></canvas>
+        </div>
+
+        <div class="card card-body ml-3" style="width: 60%">
+            <canvas id="ageChart"></canvas>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mx-auto mt-3 mb-5" style="width: 90%">
+        <div class="card card-body" style="width: 40%">
+            <canvas id="fieldChart"></canvas>
+        </div>
+
+        <div class="card card-body ml-3" style="width: 40%">
+            <canvas class="" id="occupationChart"></canvas>
+        </div>
+    </div>
+
+    <!-- chartjs styling ref: https://stackoverflow.com/questions/68061448/chart-js-change-text-color -->
+    <script>
+        const field_chart = document.getElementById('fieldChart').getContext('2d');
+        field_labels = JSON.parse({{ survey_dict['field']['labels'] | tojson }})
+	    field_data = JSON.parse({{ survey_dict['field']['values'] | tojson }})
+    
+        new Chart(field_chart, {
+            type: 'bar',
+            data: {
+                labels: field_labels,
+                datasets: [{
+                    label: 'Number of Respondent',
+                    data: field_data,
+                    borderWidth: 1,
+                    backgroundColor: "#cc65fe80"
+                    //backgroundColor: ["red", "blue","yellow","green","purple","orange"]
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        ticks: {
+                            color: 'white',
+                            beginAtZero: true
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Study Field of Respondent',
+                        color: 'white',
+                        weight: 'bold',
+                        font: {
+                            size: 20
+                        },
+                        padding: {
+                            bottom: 10
+                        }
+                    }, 
+                    legend: {
+                        position:'bottom',
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+
+        const gender_chart = document.getElementById('genderChart');
+        gender_labels = JSON.parse({{ survey_dict['gender']['labels'] | tojson }})
+	    gender_data = JSON.parse({{ survey_dict['gender']['values'] | tojson }})
+    
+        new Chart(gender_chart, {
+            type: 'pie',
+            data: {
+                labels: gender_labels,
+                datasets: [{
+                    label: 'Number of Respondent',
+                    data: gender_data,
+                    borderWidth: 1,
+                    backgroundColor: ["#54beff95", "#ff4a4d95"]
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: { 
+                    title: {
+                        display: true,
+                        text: 'Gender of Respondent',
+                        color: 'white',
+                        weight: 'bold',
+                        font: {
+                            size: 20
+                        },
+                        padding: {
+                            bottom: 10
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+
+        const age_chart = document.getElementById('ageChart').getContext('2d');
+        age_labels = JSON.parse({{ survey_dict['age']['labels'] | tojson }})
+	    age_data = JSON.parse({{ survey_dict['age']['values'] | tojson }})
+    
+        new Chart(age_chart, {
+            type: 'bar',
+            data: {
+                labels: age_labels,
+                datasets: [{
+                    label: 'Number of Respondent',
+                    data: age_data,
+                    borderWidth: 1,
+                    backgroundColor: "#63ffe580"
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        ticks: {
+                            color: 'white',
+                            beginAtZero: true
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        }
+                    }
+                },
+                plugins: { 
+                    title: {
+                        display: true,
+                        text: 'Age Group of Respondent',
+                        color: 'white',
+                        weight: 'bold',
+                        font: {
+                            size: 20
+                        },
+                        padding: {
+                            bottom: 10
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+
+        const occupation_chart = document.getElementById('occupationChart').getContext('2d');
+        occupation_labels = JSON.parse({{ survey_dict['occupation']['labels'] | tojson }})
+	    occupation_data = JSON.parse({{ survey_dict['occupation']['values'] | tojson }})
+    
+        new Chart(occupation_chart, {
+            type: 'bar',
+            data: {
+                labels: occupation_labels,
+                datasets: [{
+                    label: 'Number of Respondent',
+                    data: occupation_data,
+                    borderWidth: 1,
+                    backgroundColor: "#ffdf6180"
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        ticks: {
+                            color: 'white',
+                            beginAtZero: true
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        }
+                    }
+                },
+                plugins: { 
+                    title: {
+                        display: true,
+                        text: 'Occupation of Respondent',
+                        color: 'white',
+                        weight: 'bold',
+                        font: {
+                            size: 20
+                        },
+                        padding: {
+                            bottom: 10
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+{% endblock %}

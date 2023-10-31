@@ -1,0 +1,135 @@
+<!-- 
+Programmer Name: Ms Lee Wen Xi, APD3F2211CS(IS)
+Program Name: view_history.html
+Description: The UI of viewing the submitted survey responses 
+First Written On: 01/06/2023
+Last Edited On:  22/07/2023
+-->
+
+{% extends "side_container.html" %}
+{% block title %}Survey{% endblock %}
+{% block content%}
+
+    <div class="text-center mx-auto mt-5" style="width: 90%">
+        <form method="POST">
+            <div class="d-flex justify-content-center">
+                {% for key in survey_dict %}
+                    {% set div = 'div_'+loop.index|string %}
+                    {%  set divs = ['div_'+(loop.index-1)|string, 'div_'+loop.index|string, 'div_'+(loop.index+1)|string] %}
+                    {% if key == 'intro' %}
+                        <div class="card text-bg-info mb-3" id="{{ div }}" style="width: 50vw;">
+                            <div class="card-header bg-dark text-white">Introduction</div>
+                            <div class="card-body">
+                                <h4 class="card-text">{{ survey_dict["intro"].title }}</h3>
+                                <p class="card-text" style="white-space: pre-wrap; text-align: left">{{ survey_dict["intro"].description }}</p>
+                                
+                                <br>
+                                <p>This survey consists of {{ ques_count }} questions</p>
+                                
+                                <button onClick="switch_survey({{divs[1]}},{{divs[2]}})" class="btn btn-success card-text mt-3" style="width:30%" type="button">Start</button>
+                            </div>
+                        </div>
+                    {% elif key == 'bioinfo' %}
+                            <div class="card text-bg-info mb-3" id="{{ div }}" style="width: 50vw;display: none">
+                                <div class="card-header bg-dark text-white">Personal Information</div>
+                                <div class="card-body">
+                                    <h4 class="card-text">This survey will collect your demographic information as below</h3>
+
+                                    <div class="row box mt-3">
+                                        <div class="col-sm-6 ">
+                                            <div class="form-group" length="50%">
+                                                <label for="username" align="left">Username</label>
+                                                <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" disabled>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="email">Email Address</label>
+                                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" disabled>
+                                            </div>
+                                        
+                                            <div class="form-group">
+                                                <label for="gender">Gender</label>
+                                                <input type="text" class="form-control" id="gender" name="gender" {% if user.gender == "M" %}value="Male"{% else %}value="Female"{% endif %}disabled>
+                                            </div>
+                                        
+                                            <div class="form-group"> 
+                                                <label for="dob">Birth Date</label>
+                                                <input type="date" class="form-control" id="dob" name="dob" value="{{ user.dob }}" disabled>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-sm-6 ">
+                                            <div class="form-group">
+                                                <label for="occupation">Occupation</label>
+                                                <input type="text" class="form-control" id="occupation" name="occupation" value="{{ user.occupation }}" disabled>
+                                            </div>
+                                        
+                                            <div class="form-group">
+                                                <label for="institute">Institute</label>
+                                                <input type="text" class="form-control" id="institute" name="institute" value="{{ user.institute }}" disabled>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="field">Field</label>
+                                                <input type="text" class="form-control" id="field" name="field" value="{{ user.field }}" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button onClick="switch_survey({{divs[1]}},{{divs[0]}})" class="btn btn-primary card-text" style="width:30%" type="button">Previous</button>
+
+                                        <button onClick="switch_survey({{divs[1]}},{{divs[2]}})" class="btn btn-primary card-text" style="width:30%" type="button">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                    {% else %}
+                        <!-- {% set ans = 'ans_'+key|string %} -->
+                        <div class="card text-bg-info mb-3" id="{{ div }}" style="width: 50vw;display: none">
+                            <div class="card-header bg-dark text-white">
+                                Question {{ key }}
+                                {% if survey_dict[key].tips|length %}
+                                    <div class="btn-group dropright">
+                                        <button type="button" class="btn btn-secondary bg-transparent border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-question-circle fa-lg" style="color: grey"></i>
+                                        </button>
+                                        <div class="dropdown-menu ml-2 pl-2" style="white-space: pre-wrap;">{{ survey_dict[key].tips }}</div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">{{ survey_dict[key].question }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <textarea class="form-control" id="description" name="answers[]" {% if responses[key].status == 'Complete' %} style="white-space: pre-wrap; resize: none" disabled {% else  %} maxlength="300" style="white-space: pre-wrap;" {% endif %}>{{ responses[key].answer }}</textarea>
+                                    <select class="form-control ml-3" id="sentiment" name="sentiments[]" style="width: 15%" {% if responses[key].status == 'Complete' %}disabled{% endif %}>
+                                        <option value="Positive" {% if responses[key].real_sentiment == 'Positive' %}selected{% endif %}>Positive</option>
+                                        <option value="Neutral" {% if responses[key].real_sentiment == 'Neutral' %}selected{% endif %}>Neutral</option>
+                                        <option value="Negative" {% if responses[key].real_sentiment == 'Negative' %}selected{% endif %}>Negative</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button onClick="switch_survey({{divs[1]}},{{divs[0]}})" class="btn btn-primary card-text" style="width:30%" type="button">Previous</button>
+
+                                    {% if responses[key].status == 'Draft' %}
+                                        <button type="submit" name="button" value="Save" class="btn btn-warning card-text" style="width:30%" >Save Draft</button>
+                                    {% endif %}
+
+                                    {% if not loop.last %}
+                                    <button onClick="switch_survey({{divs[1]}},{{divs[2]}})" class="btn btn-primary card-text" style="width:30%" type="button">Next</button>
+                                    {% else %}
+                                        {% if responses[key].status == 'Draft' %}
+                                            <button type="submit" name="button" value="Submit" class="btn btn-success card-text" style="width:30%" >Submit</button>
+                                        {% elif responses[key].status == 'Complete' %}
+                                            <a type="button" class="btn btn-success card-text" style="width:30%" href="/participated_survey/{{ status }}">Back to History</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </form>
+    </div>
+{% endblock %}

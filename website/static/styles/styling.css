@@ -1,0 +1,158 @@
+html, body{
+    margin: 0px;
+    height: 100%;
+    /* background-color: white; */
+    /* background-color: #9AA0AC; */
+    background-color: #5a5a5f;
+    color: white ;
+}
+
+.box {
+    height: 100%
+}
+
+#nodeco {
+    text-decoration: none;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 35% 35% 35%;
+    row-gap: 30px;
+}
+
+.card{
+    border-style: none;
+}
+
+.list-group-item, .card-body{
+    background-color: #494E5A;
+    color: white;
+}
+
+.list-group-item.active,  .list-group-item:hover{
+    background-color: #5C91AD;
+    color: white;
+    border-style: none;
+}
+
+.btn-primary{
+    background-color: #5C91AD;
+    border-style: none;
+    color: white;
+}
+
+.btn-primary:hover, .btn-primary:not(:disabled):not(:disabled):active, .btn-primary:focus{
+    background-color: #4d7b94;
+    border-style: none;
+}
+
+.btn-primary-no-hover, .btn-primary-no-hover:hover{
+    background-color: #494E5A;
+    border-style: none;
+    color: white;
+}
+
+.bg-primary-dark, .btn-info:not(:disabled):not(:disabled):active, .btn-info:focus, .btn-primary-no-hover:not(:disabled):not(:disabled):active, .btn-primary-no-hover:focus{
+    background-color: #5C91AD;
+    border-style: none;
+    color: white;
+}
+
+.bg-primary-dark, .btn-info:hover{
+    background-color: #4d7b94;
+    color: white;
+}
+
+.btn-outline-primary{
+    border-color: #5C91AD;
+    color: white;
+}
+
+.btn-outline-primary:not(:disabled):not(:disabled):active, .btn-outline-primary:focus, .btn-outline-primary:hover{
+    background-color: #5C91AD;
+    border-color: #5C91AD;
+    color: white;
+}
+
+.btn-info, .bg-info{
+    background-color: #5C91AD;
+    border-style: none;
+    color: white;
+}
+
+.btn-success, .bg-success{
+    background-color: #3cc764;
+    border-style: none;
+}
+
+.btn-warning, .bg-warning{
+    background-color: #F1D302;
+    border-style: none;
+}
+
+.btn-danger, .bg-danger{
+    background-color: #E66337;
+    border-style: none;
+}
+
+.scroller {
+    width: 90%;
+    max-height: 20vw;
+    min-height: auto;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+}
+
+#scrollbar::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+#scrollbar::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: #F5F5F5;
+}
+
+#scrollbar::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+/* The Modal (background) */
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  margin: 15% auto; /* 15% from the top and centered */
+}
+
+/* The Close Button */
+.close {
+  color: #cccccc;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: rgb(180, 180, 180);
+  text-decoration: none;
+  cursor: pointer;
+}
